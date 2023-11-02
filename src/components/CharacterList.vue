@@ -1,33 +1,51 @@
 <template>
-  <div id="list" v-if="ch_id == 0">
+  <div id="list" v-if="ch_id > 0">
+    <router-link :to="{ name: 'all_characters' }" @click="getPages">
+      All characters
+    </router-link>
+    <router-view />
+  </div>
+  <div v-else-if="episode > 0">
+    <router-link :to="{ name: 'all_characters' }" @click="getPages">
+      All characters
+    </router-link>
+    <router-view />
+  </div>
+  <div v-else>
     <input v-model="name" />
     <button @click="searchCharacters">Search</button>
-    <button v-if="this.search" @click="getPages">All characters</button>
+    <router-link :to="{ name: 'all_characters' }" @click="getPages">
+      All characters
+    </router-link>
     <div v-for="(ch_item, index) in ch_list" :key="index">
-      Name: <a @click="this.ch_id = ch_item.id"> {{ ch_item.name }}</a> <br />
+      Name:
+      <router-link
+        @click="this.ch_id = Number(ch_item.id)"
+        :to="{ name: 'charater_page', params: { id: ch_item.id } }"
+        >{{ ch_item.name }}</router-link
+      >
+      <br />
       Species: {{ ch_item.species }} <br />
       Episodes:
-      <div style="display: inline;"
-        v-html="getEpisodes(JSON.parse(JSON.stringify(ch_item.episode)))"
-      ></div>
+      <div style="display: inline"
+        v-for="ep in getEpisodes(JSON.parse(JSON.stringify(ch_item.episode)))" :key=ep
+      >
+        <router-link
+          @click="this.episode = Number(ep)"
+          :to="{ name: 'episode_page', params: { episode: ep } }"
+        >
+          {{ ep }}
+        </router-link>
+      </div>, ...
       <br />
       <img :src="ch_item.image" /> <br />
     </div>
-  </div>
-  <div v-else-if="this.episode != 0">
-    <button @click="this.episode = 0">All characters</button>
-    <EpisodePage :episode="episode" />
-  </div>
-  <div v-else>
-    <button @click="this.ch_id = 0">All characters</button>
-    <CharacterPage :id="ch_id" />
   </div>
 </template>
 
 <script>
 import axios from "axios";
-import CharacterPage from "@/components/CharacterPage.vue";
-import EpisodePage from "@/components/EpisodePage.vue";
+
 export default {
   name: "CharacterList",
   data() {
@@ -43,10 +61,6 @@ export default {
   mounted() {
     this.scroll();
   },
-  components: {
-    CharacterPage,
-    EpisodePage,
-  },
 
   methods: {
     getEpisodes(urls) {
@@ -54,15 +68,10 @@ export default {
       let min_size = Math.min(5, urls.length);
       for (let i = 0; i < min_size; i++) {
         res +=
-          "<a>" +
           urls[i].substring(urls[i].indexOf("episode/") + 8, urls[i].length) +
-          "</a>" +
           ", ";
       }
       res = res.substring(0, res.length - 2);
-      if (urls.length > 5) {
-        res += ", ...";
-      }
       return res;
     },
     scroll() {
@@ -70,9 +79,8 @@ export default {
         let bottomOfWindow =
           window.scrollY + window.innerHeight + 100 >
           document.body.scrollHeight;
-
-        console.log(bottomOfWindow);
         if (bottomOfWindow & !this.search) {
+          setTimeout(3000);
           this.page++;
           try {
             axios
@@ -83,13 +91,13 @@ export default {
                 (response) =>
                   (this.ch_list = [...this.ch_list, ...response.data.results])
               );
-            setTimeout(3000);
           } catch {
             console.log("Error!");
           }
         }
       };
     },
+
     searchCharacters() {
       this.search = true;
       try {
@@ -100,12 +108,12 @@ export default {
         console.log("Error!");
       }
     },
+
     getPages() {
       this.search = false;
       this.name = "";
       this.ch_list = [];
-      for (let i = 1; i++; i <= this.page) {
-        console.log(i);
+      for (let i = 1; i <= this.page; i++) {
         try {
           axios
             .get("https://rickandmortyapi.com/api/character/?page=" + String(i))

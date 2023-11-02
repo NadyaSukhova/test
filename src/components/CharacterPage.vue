@@ -16,7 +16,7 @@ import axios from "axios";
 export default {
   name: "CharacterPage",
   props: {
-    id: Number,
+    id: String,
   },
   data() {
     return {
@@ -25,7 +25,7 @@ export default {
   },
   mounted() {
     axios
-    .get("https://rickandmortyapi.com/api/character/" + String(this.$props.id))
+    .get("https://rickandmortyapi.com/api/character/" + String(this.$route.params.id))
       .then((response) => (this.item = response.data));
   },
   methods: {
