@@ -1,3 +1,7 @@
+<script setup>
+import { useEpisodeStore } from "@/stores/episodes";
+</script>
+
 <template>
   <div class="episode">
     Name: {{ item.name }} <br />
@@ -23,25 +27,41 @@ export default {
       pics: [],
       got_pics: [],
       flag: true,
+      episodesObj: useEpisodeStore(),
     };
   },
   mounted() {
-    axios
-      .get(
-        "https://rickandmortyapi.com/api/episode/" +
-          String(this.$route.params.episode)
-      )
-      .then(
-        (response) => (
-          (this.item = response.data),
-          (this.pics = response.data.characters.map((element) => {
-            return element.substring(
-              element.indexOf("api/") + 4,
-              element.length
-            );
-          }))
-        )
+    if (
+      this.episodesObj.episodes_ids.includes(Number(this.$route.params.episode))
+    ) {
+      this.item = this.episodesObj.episodes.find(
+        (episode) => episode.id === Number(this.$route.params.episode)
       );
+
+      this.pics = this.episodesObj.episodes
+        .find((episode) => episode.id === Number(this.$route.params.episode))
+        .characters.map((element) => {
+          return element.substring(element.indexOf("api/") + 4, element.length);
+        });
+    } else {
+      axios
+        .get(
+          "https://rickandmortyapi.com/api/episode/" +
+            String(this.$route.params.episode)
+        )
+        .then(
+          (response) => (
+            this.episodesObj.pushEpisode(response.data),
+            (this.item = response.data),
+            (this.pics = response.data.characters.map((element) => {
+              return element.substring(
+                element.indexOf("api/") + 4,
+                element.length
+              );
+            }))
+          )
+        );
+    }
   },
   methods: {
     gotImages() {

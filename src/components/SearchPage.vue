@@ -1,9 +1,3 @@
-<script setup>
-import { useCharacterStore } from "@/stores/characters";
-
-const charactersStore = useCharacterStore();
-</script>
-
 <template>
   <div id="list" v-if="character_id > 0">
     <router-link :to="{ name: 'all_characters' }"> All characters </router-link>
@@ -13,24 +7,11 @@ const charactersStore = useCharacterStore();
     <router-link :to="{ name: 'all_characters' }"> All characters </router-link>
     <router-view />
   </div>
-  <div v-else-if="search">
-    <router-view />
-  </div>
   <div v-else>
     <input v-model="character_name" />
-    <select v-model="character_status">
-      <option value="alive">Alive</option>
-      <option value="dead">Dead</option>
-      <option value="unknown">Unknown</option>
-    </select>
-    <router-link
-      @click="this.search = true"
-      :to="{ query: { name: character_name, status: character_status } }"
-    >
-     Search
-    </router-link>
+    <button>Search</button>
 
-    <div v-for="(ch_item, index) in charactersStore.characters" :key="index">
+    <div v-for="(ch_item, index) in ch_list" :key="index">
       Name:
       <router-link
         @click="this.character_id = Number(ch_item.id)"
@@ -64,24 +45,46 @@ import axios from "axios";
 
 export default {
   name: "CharacterList",
+  props: {
+    query: Object,
+  },
   data() {
     return {
-      page: useCharacterStore().characters.length / 20,
       character_id: 0,
       episode_id: 0,
       character_name: "",
-      character_status: "",
-      seacrh: false,
-      charactersObj: useCharacterStore(),
+      ch_list: [],
     };
   },
   mounted() {
-    setTimeout(3000);
-    this.scroll();
-  },
-  beforeMount() {
-    this.charactersObj.firstPage();
-    this.page++;
+    var path ='';
+    if (this.$route.params.query.name != "") {
+      if (this.$route.params.query.status != "") {
+        path = `https://rickandmortyapi.com/api/character/?name=${this.$route.params.query.name}&status=${this.$route.params.query.status}`;
+      } else {
+        path = `https://rickandmortyapi.com/api/character/?name=${this.$route.params.query.name}`;
+      }
+    } else {
+      if (this.$route.params.query.status != "") {
+        path = `https://rickandmortyapi.com/api/character/?status=${this.$route.params.query.status}`;
+      }
+      else {
+        this.window.alert('no query!')
+      }
+    }
+
+    try {
+      axios
+        .get(path)
+        .then((response) => {
+          for (var character of response.data.results) {
+            this.ch_list.push(character);
+          }
+        });
+    } catch (error) {
+      console.log("Error!");
+      console.log(error);
+    }
   },
   methods: {
     getEpisodes(urls) {
@@ -97,30 +100,6 @@ export default {
         res += ", ...";
       }
       return res;
-    },
-    scroll() {
-      window.onscroll = () => {
-        let bottomOfWindow =
-          window.scrollY + window.innerHeight + 100 >
-          document.body.scrollHeight;
-        if (bottomOfWindow & !this.search) {
-          console.log(this.page), this.page++;
-          try {
-            axios
-              .get(
-                "https://rickandmortyapi.com/api/character/?page=" + this.page
-              )
-              .then((response) => {
-                for (var character of response.data.results) {
-                  this.charactersObj.pushCharacter(character);
-                }
-              });
-          } catch (error) {
-            console.log("Error!");
-            console.log(error);
-          }
-        }
-      };
     },
   },
 };
