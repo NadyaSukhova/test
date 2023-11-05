@@ -7,8 +7,8 @@ import { useEpisodeStore } from "@/stores/episodes";
     Name: {{ item.name }} <br />
     Date air: {{ item.air_date }} <br />
     Characters: {{ gotImages() }}
-    <div v-for="(path, index) in got_pics" :key="path">
-      <router-link :to="'/' + pics[index]"><img :src="path" /></router-link>
+    <div v-for="(path) in got_pics" :key="path">
+      <router-link :to="{ name: 'character_page', params: { id: Number(path.substring(path.indexOf('avatar/') + 7, path.length - 5)) } }" ><img :src="path" /></router-link>
     </div>
   </div>
 </template>

@@ -8,14 +8,11 @@
     <router-view />
   </div>
   <div v-else>
-    <input v-model="character_name" />
-    <button>Search</button>
-
     <div v-for="(ch_item, index) in ch_list" :key="index">
       Name:
       <router-link
         @click="this.character_id = Number(ch_item.id)"
-        :to="{ name: 'charater_page', params: { id: ch_item.id } }"
+        :to="{ name: 'character_page', params: { id: ch_item.id } }"
       >
         {{ ch_item.name }}
       </router-link>
@@ -31,7 +28,7 @@
           @click="this.episode_id = Number(ep)"
           :to="{ name: 'episode_page', params: { episode: ep } }"
         >
-          {{ ep }}
+          {{ ep }}, 
         </router-link>
       </div>
       <br />
@@ -46,7 +43,8 @@ import axios from "axios";
 export default {
   name: "CharacterList",
   props: {
-    query: Object,
+    name: String,
+    status: String,
   },
   data() {
     return {
@@ -58,21 +56,21 @@ export default {
   },
   mounted() {
     var path ='';
-    if (this.$route.params.query.name != "") {
-      if (this.$route.params.query.status != "") {
-        path = `https://rickandmortyapi.com/api/character/?name=${this.$route.params.query.name}&status=${this.$route.params.query.status}`;
+    if (this.$route.query.name != "") {
+      if (this.$route.query.status != "") {
+        path = `https://rickandmortyapi.com/api/character/?name=${this.$route.query.name}&status=${this.$route.query.status}`;
       } else {
-        path = `https://rickandmortyapi.com/api/character/?name=${this.$route.params.query.name}`;
+        path = `https://rickandmortyapi.com/api/character/?name=${this.$route.query.name}`;
       }
     } else {
-      if (this.$route.params.query.status != "") {
-        path = `https://rickandmortyapi.com/api/character/?status=${this.$route.params.query.status}`;
+      if (this.$route.query.status != "") {
+        path = `https://rickandmortyapi.com/api/character/?status=${this.$route.query.status}`;
       }
       else {
-        this.window.alert('no query!')
+        alert('No query!'); 
+        window.location.replace("/");
       }
     }
-
     try {
       axios
         .get(path)
@@ -88,16 +86,10 @@ export default {
   },
   methods: {
     getEpisodes(urls) {
-      let res = "";
+      let res = [];
       let min_size = Math.min(5, urls.length);
       for (let i = 0; i < min_size; i++) {
-        res +=
-          urls[i].substring(urls[i].indexOf("episode/") + 8, urls[i].length) +
-          ", ";
-      }
-      res = res.substring(0, res.length - 2);
-      if (urls.length > 5) {
-        res += ", ...";
+        res.push(urls[i].substring(urls[i].indexOf("episode/") + 8, urls[i].length))
       }
       return res;
     },

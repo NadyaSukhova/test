@@ -14,6 +14,7 @@ const charactersStore = useCharacterStore();
     <router-view />
   </div>
   <div v-else-if="search">
+    <router-link :to="{ name: 'all_characters' }"> All characters </router-link>
     <router-view />
   </div>
   <div v-else>
@@ -25,16 +26,19 @@ const charactersStore = useCharacterStore();
     </select>
     <router-link
       @click="this.search = true"
-      :to="{ query: { name: character_name, status: character_status } }"
+      :to="{
+        name: 'search_page',
+        query: { name: character_name, status: character_status },
+      }"
     >
-     Search
+      Search
     </router-link>
 
     <div v-for="(ch_item, index) in charactersStore.characters" :key="index">
       Name:
       <router-link
         @click="this.character_id = Number(ch_item.id)"
-        :to="{ name: 'charater_page', params: { id: ch_item.id } }"
+        :to="{ name: 'character_page', params: { id: ch_item.id } }"
       >
         {{ ch_item.name }}
       </router-link>
@@ -43,15 +47,26 @@ const charactersStore = useCharacterStore();
       Episodes:
       <div
         style="display: inline"
-        v-for="ep in getEpisodes(JSON.parse(JSON.stringify(ch_item.episode)))"
+        v-for="(ep, index) in getEpisodes(
+          JSON.parse(JSON.stringify(ch_item.episode))
+        )"
         :key="ep"
       >
+        <div style="display: inline" v-if="index != 0">,</div>
         <router-link
           @click="this.episode_id = Number(ep)"
           :to="{ name: 'episode_page', params: { episode: ep } }"
         >
           {{ ep }}
         </router-link>
+      </div>
+      <div
+        style="display: inline"
+        v-if="
+          JSON.parse(JSON.stringify(ch_item.episode)).length > 5
+        "
+      >
+        , ...
       </div>
       <br />
       <img :src="ch_item.image" /> <br />
@@ -71,7 +86,7 @@ export default {
       episode_id: 0,
       character_name: "",
       character_status: "",
-      seacrh: false,
+      search: false,
       charactersObj: useCharacterStore(),
     };
   },
@@ -85,16 +100,12 @@ export default {
   },
   methods: {
     getEpisodes(urls) {
-      let res = "";
+      let res = [];
       let min_size = Math.min(5, urls.length);
       for (let i = 0; i < min_size; i++) {
-        res +=
-          urls[i].substring(urls[i].indexOf("episode/") + 8, urls[i].length) +
-          ", ";
-      }
-      res = res.substring(0, res.length - 2);
-      if (urls.length > 5) {
-        res += ", ...";
+        res.push(
+          urls[i].substring(urls[i].indexOf("episode/") + 8, urls[i].length)
+        );
       }
       return res;
     },
@@ -103,8 +114,13 @@ export default {
         let bottomOfWindow =
           window.scrollY + window.innerHeight + 100 >
           document.body.scrollHeight;
-        if (bottomOfWindow & !this.search) {
-          console.log(this.page), this.page++;
+        if (
+          bottomOfWindow &
+          !this.search &
+          (this.character_id === 0) &
+          (this.episode_id === 0)
+        ) {
+          this.page++;
           try {
             axios
               .get(
