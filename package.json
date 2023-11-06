@@ -2,7 +2,7 @@
   "name": "test",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://NadyaSukhova.github.io/test",
+  "homepage": "https://nadyasukhova.github.io/test/",
   "scripts": {
     "predeploy": "npm run build",
     "deploy": "gh-pages-clean gh-pages -d build",
