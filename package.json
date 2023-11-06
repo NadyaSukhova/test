@@ -2,7 +2,6 @@
   "name": "test",
   "version": "0.1.0",
   "private": true,
-  "deploy": "node ./node_modules/vue-gh-pages/index.js",
   "homepage": "https://NadyaSukhova.github.io/test",
   "scripts": {
     "predeploy": "npm run build",
