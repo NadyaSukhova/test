@@ -11,7 +11,7 @@ const routes = [
   },
   {
     path: "/",
-    redirect: {all_characters}
+    redirect: { name: 'character_page' }
   },
   {
     path: "/test/character/:id",
