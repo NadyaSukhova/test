@@ -21,10 +21,6 @@ export default {
   },
 };
 
-/*document.addEventListener('mousemove', e => {
-  document.getElementById('circle').style.left = e.pageX + "px";
-  document.getElementById('circle').style.top = e.pageY + "px";
-});*/
 </script>
 
 <style>

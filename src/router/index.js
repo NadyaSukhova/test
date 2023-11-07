@@ -6,11 +6,15 @@ import SearchPage from "@/components/SearchPage.vue";
 const routes = [
   {
     path: "/",
+    redirect: {all_characters}
+  },
+  {
+    ath: '/test/',
     name: "all_characters",
     component: CharacterList,
   },
   {
-    path: "/character/:id",
+    path: "/test/character/:id",
     name: "character_page",
     props: true,
     // route level code-splitting
@@ -19,7 +23,7 @@ const routes = [
     component: CharacterPage,
   },
   {
-    path: "/episode/:episode",
+    path: "/test/episode/:episode",
     name: "episode_page",
     props: true,
     // route level code-splitting
@@ -28,7 +32,7 @@ const routes = [
     component: EpisodePage,
   },
   {
-    path: "/seacrh",
+    path: "/test/seacrh",
     name: "search_page",
     query: true,
     // route level code-splitting
