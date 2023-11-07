@@ -5,13 +5,13 @@ import EpisodePage from "@/components/EpisodePage.vue";
 import SearchPage from "@/components/SearchPage.vue";
 const routes = [
   {
-    path: "/",
-    redirect: {all_characters}
-  },
-  {
     ath: '/test/',
     name: "all_characters",
     component: CharacterList,
+  },
+  {
+    path: "/",
+    redirect: {all_characters}
   },
   {
     path: "/test/character/:id",
