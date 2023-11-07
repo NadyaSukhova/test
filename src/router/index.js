@@ -5,7 +5,7 @@ import EpisodePage from "@/components/EpisodePage.vue";
 import SearchPage from "@/components/SearchPage.vue";
 const routes = [
   {
-    ath: '/',
+    path: '/',
     name: "all_characters",
     component: CharacterList,
   },
