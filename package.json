@@ -2,7 +2,7 @@
   "name": "test",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://nadyasukhova.github.io/test/",
+  "homepage": "https://github.com/NadyaSukhova/test",
   "wst": "/dist/",  
   "scripts": {
     "serve": "vue-cli-service serve",
