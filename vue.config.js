@@ -1,1 +1,3 @@
-module.exports = { baseUrl: '/test/ '}
+module.exports = {
+  publicPath: '/test/'
+}
