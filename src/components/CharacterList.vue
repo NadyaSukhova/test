@@ -5,13 +5,13 @@ const charactersStore = useCharacterStore();
 </script>
 
 <template>
-  <div v-if="character_id > 0">
+  <div v-if="this.character_id > 0">
     <router-view />
   </div>
-  <div v-else-if="episode_id > 0">
+  <div v-else-if="this.episode_id > 0">
     <router-view />
   </div>
-  <div v-else-if="search">
+  <div v-else-if="this.search">
     <router-view />
   </div>
   <div v-else>
