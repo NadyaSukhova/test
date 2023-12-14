@@ -15,15 +15,15 @@ const charactersStore = useCharacterStore();
     <router-view />
   </div>
   <div v-else>
-    <div style="color:white" class="search_panel">
-      Name: <input v-model="character_name" />
-      Status: <select v-model="character_status">
+    <div style="color: white" class="search_panel">
+      Name: <input v-model="character_name" /> Status:
+      <select v-model="character_status">
         <option value="alive">Alive</option>
         <option value="dead">Dead</option>
         <option value="unknown">Unknown</option>
       </select>
       <router-link
-      style="color: rgb(191,222,66)"
+        style="color: rgb(191, 222, 66)"
         @click="this.search = true"
         :to="{
           name: 'search_page',
@@ -122,8 +122,12 @@ export default {
       return res;
     },
     scroll() {
-      
-      if (!this.search & (this.episode_id === 0) & (this.character_id === 0) & (this.page < 42)) {
+      if (
+        !this.search &
+        (this.episode_id === 0) &
+        (this.character_id === 0) &
+        (this.page < 42)
+      ) {
         window.onscroll = () => {
           let bottomOfWindow =
             window.scrollY + window.innerHeight + 100 >
@@ -190,9 +194,8 @@ export default {
   border-bottom-right-radius: 50px;
   z-index: 10;
   display: flex;
-  align-items: center
+  align-items: center;
 }
-
 
 .search_panel:hover {
   left: 0;

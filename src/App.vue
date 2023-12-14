@@ -19,6 +19,9 @@ export default {
   components: {
     CharacterList,
   },
+  mounted() {
+    this.$router.push('/')
+  }
 };
 
 </script>
